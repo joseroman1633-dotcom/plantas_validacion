@@ -30,12 +30,22 @@
         Imagen {{ numero_actual }} de {{ total }}
       </p>
 
-    <div class="test-center__image-wrap">
-        <img
-          src="{{ imagen.imagen.url }}"
-          alt="{{ imagen.nombre }}"
-          class="test-center__image"
-        >
+      <div class="test-center__image-wrap">
+        {% if imagen.imagen_base64 %}
+          <img
+            src="{{ imagen.imagen_base64 }}"
+            alt="{{ imagen.nombre }}"
+            class="test-center__image"
+          >
+        {% elif imagen.imagen %}
+          <img
+            src="{{ imagen.imagen.url }}"
+            alt="{{ imagen.nombre }}"
+            class="test-center__image"
+          >
+        {% else %}
+          <p class="test-center__subtitle">No hay imagen disponible.</p>
+        {% endif %}
       </div>
 
       <div class="test-center__result-box">
@@ -157,7 +167,7 @@
         <a class="btn btn--primary" href="{% url 'iniciar_prueba_publica' %}">
           Iniciar otra prueba
         </a>
-        
+
         <a class="btn btn--ghost" href="{% url 'prueba' %}">
           Volver al módulo de pruebas
         </a>
@@ -175,11 +185,21 @@
       </p>
 
       <div class="test-center__image-wrap">
-        <img
-          src="{{ imagen.imagen.url }}"
-          alt="{{ imagen.nombre }}"
-          class="test-center__image"
-        >
+        {% if imagen.imagen_base64 %}
+          <img
+            src="{{ imagen.imagen_base64 }}"
+            alt="{{ imagen.nombre }}"
+            class="test-center__image"
+          >
+        {% elif imagen.imagen %}
+          <img
+            src="{{ imagen.imagen.url }}"
+            alt="{{ imagen.nombre }}"
+            class="test-center__image"
+          >
+        {% else %}
+          <p class="test-center__subtitle">No hay imagen disponible.</p>
+        {% endif %}
       </div>
 
       <form method="post" class="test-center__form" id="respuestaFormPublica">
