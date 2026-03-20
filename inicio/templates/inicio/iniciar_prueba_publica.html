@@ -30,16 +30,27 @@
       </p>
 
       <div class="test-center__image-wrap">
-        {% if imagen.imagen %}
+        {% if imagen and imagen.imagen %}
           <img
             src="{{ imagen.imagen.url }}"
             alt="{{ imagen.nombre }}"
             class="test-center__image"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
           >
-          <p class="test-center__debug-url">
-            URL imagen: {{ imagen.imagen.url }}
-          </p>
-        {% elif imagen.imagen_base64 %}
+
+          <div class="test-center__debug-box" style="display:none;">
+            <p><strong>No se pudo cargar la imagen.</strong></p>
+            <p><strong>Nombre:</strong> {{ imagen.nombre }}</p>
+            <p><strong>Valor imagen:</strong> {{ imagen.imagen }}</p>
+            <p><strong>URL:</strong> {{ imagen.imagen.url }}</p>
+            <p>
+              <a href="{{ imagen.imagen.url }}" target="_blank" class="test-center__debug-link">
+                Abrir imagen en una pestaña nueva
+              </a>
+            </p>
+          </div>
+
+        {% elif imagen and imagen.imagen_base64 %}
           <img
             src="data:image/jpeg;base64,{{ imagen.imagen_base64 }}"
             alt="{{ imagen.nombre }}"
@@ -138,16 +149,27 @@
       </p>
 
       <div class="test-center__image-wrap">
-        {% if imagen.imagen %}
+        {% if imagen and imagen.imagen %}
           <img
             src="{{ imagen.imagen.url }}"
             alt="{{ imagen.nombre }}"
             class="test-center__image"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
           >
-          <p class="test-center__debug-url">
-            URL imagen: {{ imagen.imagen.url }}
-          </p>
-        {% elif imagen.imagen_base64 %}
+
+          <div class="test-center__debug-box" style="display:none;">
+            <p><strong>No se pudo cargar la imagen.</strong></p>
+            <p><strong>Nombre:</strong> {{ imagen.nombre }}</p>
+            <p><strong>Valor imagen:</strong> {{ imagen.imagen }}</p>
+            <p><strong>URL:</strong> {{ imagen.imagen.url }}</p>
+            <p>
+              <a href="{{ imagen.imagen.url }}" target="_blank" class="test-center__debug-link">
+                Abrir imagen en una pestaña nueva
+              </a>
+            </p>
+          </div>
+
+        {% elif imagen and imagen.imagen_base64 %}
           <img
             src="data:image/jpeg;base64,{{ imagen.imagen_base64 }}"
             alt="{{ imagen.nombre }}"
@@ -262,12 +284,22 @@
     text-align:center;
   }
 
-  .test-center__debug-url{
-    margin-top:10px;
-    color:#9ff5c8;
-    font-size:12px;
+  .test-center__debug-box{
+    width:100%;
+    max-width:720px;
+    margin-top:14px;
+    padding:16px;
+    border-radius:14px;
+    background:rgba(255,80,80,.08);
+    border:1px solid rgba(255,80,80,.28);
+    color:#fff;
     word-break:break-all;
-    text-align:center;
+    line-height:1.6;
+  }
+
+  .test-center__debug-link{
+    color:#9ff5c8;
+    text-decoration:underline;
   }
 
   .test-center__actions{
