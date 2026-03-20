@@ -1,3 +1,6 @@
+import base64
+import mimetypes
+
 from django.db import models
 from django.contrib.auth.models import User
 from inicio.models import ParticipantePublico
@@ -5,12 +8,12 @@ from inicio.models import ParticipantePublico
 
 class ImagenValidacion(models.Model):
     TIPO_CHOICES = [
-        ('IA', 'Imagen generada por IA'),
-        ('NO_IA', 'Sintética'),
+        ("IA", "Imagen generada por IA"),
+        ("NO_IA", "Sintética"),
     ]
 
     nombre = models.CharField(max_length=255)
-    imagen = models.ImageField(upload_to='imagenes_validacion/')
+    imagen = models.ImageField(upload_to="imagenes_validacion/")
     imagen_base64 = models.TextField(blank=True, null=True)
     tipo_origen = models.CharField(max_length=10, choices=TIPO_CHOICES)
     seleccionada = models.BooleanField(default=False)
@@ -21,11 +24,37 @@ class ImagenValidacion(models.Model):
     def __str__(self):
         return f"{self.nombre} - {self.tipo_origen}"
 
+    def generar_imagen_base64(self):
+        if not self.imagen:
+            return None
+
+        try:
+            self.imagen.open("rb")
+            contenido = self.imagen.read()
+
+            mime_type, _ = mimetypes.guess_type(self.imagen.name)
+            if not mime_type:
+                mime_type = "image/jpeg"
+
+            imagen_codificada = base64.b64encode(contenido).decode("utf-8")
+            return f"data:{mime_type};base64,{imagen_codificada}"
+        except Exception:
+            return None
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+
+        nueva_base64 = self.generar_imagen_base64()
+
+        if nueva_base64 and self.imagen_base64 != nueva_base64:
+            self.imagen_base64 = nueva_base64
+            super().save(update_fields=["imagen_base64"])
+
 
 class SesionPrueba(models.Model):
     DESTINATARIO_CHOICES = [
-        ('DR_JORGE', 'Dr. Jorge'),
-        ('LUCIANO', 'Luciano'),
+        ("DR_JORGE", "Dr. Jorge"),
+        ("LUCIANO", "Luciano"),
     ]
 
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -45,14 +74,14 @@ class SesionPrueba(models.Model):
 
 class PruebaImagenRespuesta(models.Model):
     RESPUESTA_CHOICES = [
-        ('IA', 'IA'),
-        ('NO_IA', 'SINTÉTICA'),
+        ("IA", "IA"),
+        ("NO_IA", "SINTÉTICA"),
     ]
 
     sesion = models.ForeignKey(
         SesionPrueba,
         on_delete=models.CASCADE,
-        related_name='respuestas',
+        related_name="respuestas",
         null=True,
         blank=True
     )
@@ -68,14 +97,14 @@ class PruebaImagenRespuesta(models.Model):
 
 class SesionPruebaPublica(models.Model):
     DESTINATARIO_CHOICES = [
-        ('DR_JORGE', 'Dr. Jorge'),
-        ('LUCIANO', 'Luciano'),
+        ("DR_JORGE", "Dr. Jorge"),
+        ("LUCIANO", "Luciano"),
     ]
 
     participante = models.ForeignKey(
         ParticipantePublico,
         on_delete=models.CASCADE,
-        related_name='sesiones_publicas',
+        related_name="sesiones_publicas",
         null=True,
         blank=True
     )
@@ -97,21 +126,21 @@ class SesionPruebaPublica(models.Model):
 
 class PruebaImagenRespuestaPublica(models.Model):
     RESPUESTA_CHOICES = [
-        ('IA', 'IA'),
-        ('NO_IA', 'SINTÉTICA'),
+        ("IA", "IA"),
+        ("NO_IA", "SINTÉTICA"),
     ]
 
     sesion = models.ForeignKey(
         SesionPruebaPublica,
         on_delete=models.CASCADE,
-        related_name='respuestas',
+        related_name="respuestas",
         null=True,
         blank=True
     )
     participante = models.ForeignKey(
         ParticipantePublico,
         on_delete=models.CASCADE,
-        related_name='respuestas_publicas',
+        related_name="respuestas_publicas",
         null=True,
         blank=True
     )
