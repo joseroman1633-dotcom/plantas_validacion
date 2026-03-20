@@ -30,13 +30,11 @@
       </p>
 
       <div class="test-center__image-wrap">
-        {% if imagen.imagen_base64 %}
-          <img src="{{ imagen.imagen_base64 }}" alt="{{ imagen.nombre }}" class="test-center__image">
-        {% elif imagen.imagen %}
-          <img src="{{ imagen.imagen.url }}" alt="{{ imagen.nombre }}" class="test-center__image">
-        {% else %}
-          <p class="test-center__subtitle">No hay imagen disponible.</p>
-        {% endif %}
+        <img
+          src="{{ imagen.imagen.url }}"
+          alt="{{ imagen.nombre }}"
+          class="test-center__image"
+        >
       </div>
 
       <div class="test-center__actions">
@@ -125,13 +123,11 @@
       </p>
 
       <div class="test-center__image-wrap">
-        {% if imagen.imagen_base64 %}
-          <img src="{{ imagen.imagen_base64 }}" alt="{{ imagen.nombre }}" class="test-center__image">
-        {% elif imagen.imagen %}
-          <img src="{{ imagen.imagen.url }}" alt="{{ imagen.nombre }}" class="test-center__image">
-        {% else %}
-          <p class="test-center__subtitle">No hay imagen disponible.</p>
-        {% endif %}
+        <img
+          src="{{ imagen.imagen.url }}"
+          alt="{{ imagen.nombre }}"
+          class="test-center__image"
+        >
       </div>
 
       <form method="post" class="test-center__actions">
@@ -238,6 +234,7 @@
     font-weight: 700;
     cursor: pointer;
     border: none;
+    transition: all .25s ease;
   }
 
   .btn--primary{
@@ -246,10 +243,20 @@
     color: #fff;
   }
 
+  .btn--primary:hover{
+    background: rgba(0,255,150,.24);
+    transform: translateY(-1px);
+  }
+
   .btn--ghost{
     background: rgba(255,255,255,.06);
     border: 1px solid rgba(255,255,255,.12);
     color: #fff;
+  }
+
+  .btn--ghost:hover{
+    background: rgba(255,255,255,.1);
+    transform: translateY(-1px);
   }
 
   .test-center__grid{
