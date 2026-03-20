@@ -12,5 +12,4 @@ urlpatterns = [
     path("prueba-publica/", views.iniciar_prueba_publica, name="iniciar_prueba_publica"),
     path("graficas-publicas/", views.graficas_publicas, name="graficas_publicas"),
 
-    path("bootstrap-superuser/", views.bootstrap_superuser, name="bootstrap_superuser"),
 ]
