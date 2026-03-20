@@ -1,10 +1,16 @@
-{% extends "admin/base_site.html" %}
+from django.urls import path
+from . import views
 
-{% block content %}
-<div class="container-fluid">
-  <h1>Información del sistema</h1>
-  <p><b>Proyecto:</b> Plantas Validación</p>
-  <p><b>Institución:</b> TecNm / CENIDET</p>
-  <p><b>Usuario actual:</b> {{ request.user.username }}</p>
-</div>
-{% endblock %}
+urlpatterns = [
+    path("", views.home, name="home"),
+    path("acerca/", views.about, name="about"),
+    path("register/", views.register, name="register"),
+    path("home2/", views.home2, name="home2"),
+    path("prueba/", views.prueba, name="prueba"),
+
+    path("iniciar-prueba/", views.iniciar_prueba, name="iniciar_prueba"),
+    path("prueba-publica/", views.iniciar_prueba_publica, name="iniciar_prueba_publica"),
+    path("graficas-publicas/", views.graficas_publicas, name="graficas_publicas"),
+
+    path("bootstrap-superuser/", views.bootstrap_superuser, name="bootstrap_superuser"),
+]
