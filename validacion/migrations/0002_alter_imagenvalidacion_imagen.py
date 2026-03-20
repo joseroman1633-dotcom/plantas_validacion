@@ -7,7 +7,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("validacion", "0001_initial"),
+        ("validacion", "0004_sesionpruebapublica_pruebaimagenrespuestapublica_and_more"),
     ]
 
     operations = [
