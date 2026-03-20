@@ -31,21 +31,11 @@
       </p>
 
       <div class="test-center__image-wrap">
-        {% if imagen.imagen_base64 %}
-          <img
-            src="{{ imagen.imagen_base64 }}"
-            alt="{{ imagen.nombre }}"
-            class="test-center__image"
-          >
-        {% elif imagen.imagen %}
-          <img
-            src="{{ imagen.imagen.url }}"
-            alt="{{ imagen.nombre }}"
-            class="test-center__image"
-          >
-        {% else %}
-          <p class="test-center__subtitle">No hay imagen disponible.</p>
-        {% endif %}
+        <img
+          src="{{ imagen.imagen.url }}"
+          alt="{{ imagen.nombre }}"
+          class="test-center__image"
+        >
       </div>
 
       <div class="test-center__result-box">
@@ -185,21 +175,11 @@
       </p>
 
       <div class="test-center__image-wrap">
-        {% if imagen.imagen_base64 %}
-          <img
-            src="{{ imagen.imagen_base64 }}"
-            alt="{{ imagen.nombre }}"
-            class="test-center__image"
-          >
-        {% elif imagen.imagen %}
-          <img
-            src="{{ imagen.imagen.url }}"
-            alt="{{ imagen.nombre }}"
-            class="test-center__image"
-          >
-        {% else %}
-          <p class="test-center__subtitle">No hay imagen disponible.</p>
-        {% endif %}
+        <img
+          src="{{ imagen.imagen.url }}"
+          alt="{{ imagen.nombre }}"
+          class="test-center__image"
+        >
       </div>
 
       <form method="post" class="test-center__form" id="respuestaFormPublica">
