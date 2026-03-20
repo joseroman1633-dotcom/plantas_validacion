@@ -6,14 +6,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-key")
 DEBUG = os.getenv("DEBUG", "False") == "True"
 
-ALLOWED_HOSTS = [host for host in os.getenv("ALLOWED_HOSTS", "").split(",") if host]
+ALLOWED_HOSTS = [host.strip() for host in os.getenv("ALLOWED_HOSTS", "").split(",") if host.strip()]
 
 RENDER_EXTERNAL_HOSTNAME = os.getenv("RENDER_EXTERNAL_HOSTNAME")
 if RENDER_EXTERNAL_HOSTNAME and RENDER_EXTERNAL_HOSTNAME not in ALLOWED_HOSTS:
     ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
 
 CSRF_TRUSTED_ORIGINS = [
-    origin for origin in os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",") if origin
+    origin.strip()
+    for origin in os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",")
+    if origin.strip()
 ]
 
 INSTALLED_APPS = [
@@ -26,6 +28,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
 
     "cloudinary",
+    "cloudinary_storage",
 
     "rest_framework",
 
@@ -134,16 +137,13 @@ JAZZMIN_SETTINGS = {
     "site_brand": "Platans Validacion System",
     "welcome_sign": "Bienvenido al panel de administración",
     "copyright": "Platans",
-
     "search_model": [],
-
     "topmenu_links": [
         {"name": "Inicio", "url": "admin:index", "permissions": ["auth.view_user"]},
         {"name": "Gráficas internas", "url": "admin_graficas", "permissions": ["auth.view_user"]},
         {"name": "Gráficas públicas", "url": "admin_graficas_publicas", "permissions": ["auth.view_user"]},
         {"name": "Cerrar sesión", "url": "salir", "permissions": ["auth.view_user"]},
     ],
-
     "custom_links": {
         "validacion": [
             {
@@ -160,7 +160,6 @@ JAZZMIN_SETTINGS = {
             },
         ],
     },
-
     "icons": {
         "auth": "fas fa-users-cog",
         "auth.user": "fas fa-user",
@@ -170,7 +169,6 @@ JAZZMIN_SETTINGS = {
         "validacion.PruebaImagenRespuesta": "fas fa-check-circle",
         "validacion.SesionPrueba": "fas fa-list",
     },
-
     "show_sidebar": True,
     "navigation_expanded": True,
     "hide_apps": [],
