@@ -22,9 +22,7 @@ from validacion.models import (
 )
 
 
-# =========================
-# VISTAS BÁSICAS
-# =========================
+
 
 def home(request):
     return render(request, "inicio/home.html")
@@ -53,44 +51,6 @@ def admin_info(request):
     return render(request, "admin/info.html")
 
 
-# =========================
-# 🔐 CREAR SUPERUSUARIO (RENDER)
-# =========================
-
-def bootstrap_superuser(request):
-    token = request.GET.get("token")
-    expected = os.getenv("BOOTSTRAP_TOKEN", "")
-
-    if not expected or token != expected:
-        return HttpResponseForbidden("No autorizado")
-
-    username = os.getenv("BOOTSTRAP_ADMIN_USERNAME", "Jorge")
-    email = os.getenv("BOOTSTRAP_ADMIN_EMAIL", "jorge@example.com")
-    password = os.getenv("BOOTSTRAP_ADMIN_PASSWORD", "B4E965B14F")
-
-    user, created = User.objects.get_or_create(
-        username=username,
-        defaults={
-            "email": email,
-            "is_staff": True,
-            "is_superuser": True,
-        },
-    )
-
-    user.email = email
-    user.is_staff = True
-    user.is_superuser = True
-    user.set_password(password)
-    user.save()
-
-    if created:
-        return HttpResponse("Superusuario creado correctamente.")
-    return HttpResponse("Superusuario actualizado correctamente.")
-
-
-# =========================
-# PRUEBA PRIVADA
-# =========================
 
 @login_required
 def iniciar_prueba(request):
@@ -213,9 +173,6 @@ def iniciar_prueba(request):
     })
 
 
-# =========================
-# PRUEBA PÚBLICA
-# =========================
 
 def iniciar_prueba_publica(request):
     if request.user.is_authenticated:
@@ -285,9 +242,6 @@ def iniciar_prueba_publica(request):
     })
 
 
-# =========================
-# REGISTRO
-# =========================
 
 def register(request):
     if request.method == "POST":
@@ -301,10 +255,6 @@ def register(request):
 
     return render(request, "registration/register.html", {"form": form})
 
-
-# =========================
-# GRÁFICAS
-# =========================
 
 @staff_member_required
 def admin_graficas(request):
