@@ -30,11 +30,26 @@
       </p>
 
       <div class="test-center__image-wrap">
-        <img
-          src="{{ imagen.imagen.url }}"
-          alt="{{ imagen.nombre }}"
-          class="test-center__image"
-        >
+        {% if imagen.imagen %}
+          <img
+            src="{{ imagen.imagen.url }}"
+            alt="{{ imagen.nombre }}"
+            class="test-center__image"
+          >
+          <p class="test-center__debug-url">
+            URL imagen: {{ imagen.imagen.url }}
+          </p>
+        {% elif imagen.imagen_base64 %}
+          <img
+            src="data:image/jpeg;base64,{{ imagen.imagen_base64 }}"
+            alt="{{ imagen.nombre }}"
+            class="test-center__image"
+          >
+        {% else %}
+          <div class="test-center__image-empty">
+            No hay imagen disponible
+          </div>
+        {% endif %}
       </div>
 
       <div class="test-center__actions">
@@ -123,11 +138,26 @@
       </p>
 
       <div class="test-center__image-wrap">
-        <img
-          src="{{ imagen.imagen.url }}"
-          alt="{{ imagen.nombre }}"
-          class="test-center__image"
-        >
+        {% if imagen.imagen %}
+          <img
+            src="{{ imagen.imagen.url }}"
+            alt="{{ imagen.nombre }}"
+            class="test-center__image"
+          >
+          <p class="test-center__debug-url">
+            URL imagen: {{ imagen.imagen.url }}
+          </p>
+        {% elif imagen.imagen_base64 %}
+          <img
+            src="data:image/jpeg;base64,{{ imagen.imagen_base64 }}"
+            alt="{{ imagen.nombre }}"
+            class="test-center__image"
+          >
+        {% else %}
+          <div class="test-center__image-empty">
+            No hay imagen disponible
+          </div>
+        {% endif %}
       </div>
 
       <form method="post" class="test-center__actions">
@@ -201,7 +231,9 @@
   .test-center__image-wrap{
     width:100%;
     display:flex;
+    flex-direction:column;
     justify-content:center;
+    align-items:center;
     margin:22px 0;
   }
 
@@ -213,6 +245,29 @@
     object-fit:contain;
     background:rgba(255,255,255,.04);
     padding:8px;
+  }
+
+  .test-center__image-empty{
+    width:100%;
+    max-width:420px;
+    min-height:220px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:16px;
+    border:1px solid rgba(255,255,255,.1);
+    background:rgba(255,255,255,.04);
+    color:rgba(255,255,255,.7);
+    padding:20px;
+    text-align:center;
+  }
+
+  .test-center__debug-url{
+    margin-top:10px;
+    color:#9ff5c8;
+    font-size:12px;
+    word-break:break-all;
+    text-align:center;
   }
 
   .test-center__actions{
