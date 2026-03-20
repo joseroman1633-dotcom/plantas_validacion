@@ -1,0 +1,10 @@
+{% load i18n admin_list %}
+
+{% if pagination_required %}
+<div class="paginator">
+    {% for i in page_range %}
+        {% paginator_number cl i %}
+    {% endfor %}
+    {{ cl.result_count }} {% if cl.result_count == 1 %}resultado{% else %}resultados{% endif %}
+</div>
+{% endif %}

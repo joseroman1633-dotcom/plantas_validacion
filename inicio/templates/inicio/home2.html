@@ -1,0 +1,32 @@
+{% extends "inicio/base.html" %}
+
+{% block title %}Panel | Validación de Plantas{% endblock %}
+
+
+{% block content %}
+<section class="hero card">
+  <div class="hero__content">
+    <div class="pill">✅ Sesión iniciada</div>
+
+    <h1 class="hero__title">
+      Hola 👋 <span class="accent">{{ user.username }}</span>
+    </h1>
+
+    <p class="hero__subtitle">
+      Ya tienes acceso al sistema.
+    </p>
+
+    <div class="hero__actions">
+      <form action="{% url 'logout' %}" method="post" style="display:inline;">
+        {% csrf_token %}
+        <button class="btn btn--ghost" type="submit">
+          Cerrar sesión
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <div class="blob blob--1"></div>
+  <div class="blob blob--2"></div>
+</section>
+{% endblock %}

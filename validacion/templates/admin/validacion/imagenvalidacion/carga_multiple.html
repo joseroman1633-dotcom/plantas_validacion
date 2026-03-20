@@ -1,0 +1,16 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+<h1>{{ title }}</h1>
+
+<div style="max-width:700px;background:white;padding:20px;border-radius:8px">
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="default">Subir imágenes</button>
+    </form>
+</div>
+
+<br>
+<a href="../">← Volver al listado</a>
+{% endblock %}

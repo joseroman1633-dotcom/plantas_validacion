@@ -1,0 +1,584 @@
+{% load static %}
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Validación de Plantas{% endblock %}</title>
+
+  <style>
+    :root{
+      --bg-0: #0b0f14;
+      --bg-1: #111827;
+      --card: rgba(17, 24, 39, 0.65);
+      --card-border: rgba(255,255,255,0.08);
+      --text: #e5e7eb;
+      --muted: rgba(229,231,235,0.75);
+      --accent: #00ff5e;
+
+      --danger: rgba(255,80,80,.14);
+      --danger-border: rgba(255,80,80,.35);
+      --focus: rgba(0,255,94,.22);
+      --focus-border: rgba(0,255,94,.55);
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: radial-gradient(1200px 600px at 20% 0%, rgba(0,255,94,0.08), transparent 60%),
+                  radial-gradient(900px 500px at 80% 10%, rgba(56,191,248,0.12), transparent 60%),
+                  var(--bg-0);
+      color: var(--text);
+    }
+
+    a{ color:inherit; }
+
+    /* Layout */
+    .container{
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 18px;
+    }
+
+    header{
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(0,0,0,0.6);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      backdrop-filter: blur(10px);
+    }
+
+    .header__inner{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 14px;
+      padding: 14px 0;
+      flex-wrap: wrap;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .brand__dot{
+      width:10px;
+      height:10px;
+      border-radius:999px;
+      background: var(--accent);
+      box-shadow: 0 0 16px rgba(0,255,94,0.4);
+    }
+
+    nav{
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .navlink{
+      padding: 8px 10px;
+      border-radius: 10px;
+      text-decoration: none;
+      color: rgba(255,255,255,0.88);
+      border: 1px solid transparent;
+      transition: background .12s ease, border-color .12s ease;
+      font-weight: 650;
+      background: transparent;
+      cursor: pointer;
+    }
+
+    .navlink:hover{
+      background: rgba(255,255,255,0.06);
+      border-color: rgba(255,255,255,0.10);
+    }
+
+    /* ✅ ACTIVO (para Inicio / Prueba / etc.) */
+    .navlink.active{
+      background: rgba(0,255,94,0.12);
+      border-color: rgba(0,255,94,0.28);
+      color: rgba(255,255,255,0.95);
+      box-shadow: 0 0 0 3px rgba(0,255,94,0.08);
+    }
+
+    main{
+      padding: 22px 0 28px;
+    }
+
+    footer{
+      border-top:1px solid rgba(255,255,255,.10);
+      padding:16px 0;
+      color: rgba(229,231,235,0.7);
+      text-align:center;
+      font-size: 13px;
+    }
+
+    /* Common UI */
+    .accent{ color: var(--accent); }
+
+    .card{
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.35);
+    }
+
+    .pill{
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: rgba(255,255,255,0.9);
+      font-size: 13px;
+    }
+
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      text-decoration:none;
+      font-weight: 700;
+      border: 1px solid rgba(255,255,255,0.12);
+      transition: transform .12s ease, background .12s ease, border-color .12s ease, box-shadow .12s ease;
+      color: white;
+      cursor: pointer;
+    }
+
+    .btn:hover{
+      transform: translateY(-1px);
+      box-shadow: 0 10px 18px rgba(0,0,0,0.25);
+    }
+
+    .btn--primary{
+      background: rgba(0, 255, 94, 0.18);
+      border-color: rgba(0, 255, 94, 0.35);
+    }
+
+    .btn--primary:hover{
+      background: rgba(0, 255, 94, 0.25);
+      border-color: rgba(0, 255, 94, 0.55);
+    }
+
+    .btn--ghost{
+      background: rgba(255,255,255,0.04);
+    }
+
+    .btn--ghost:hover{
+      background: rgba(255,255,255,0.08);
+    }
+
+    .btn--full{
+      width: 100%;
+      margin-top: 14px;
+    }
+
+    .dropdown{
+      position: relative;
+      display: inline-block;
+    }
+
+    .dropdown__menu{
+      display: none;
+      position: absolute;
+      top: calc(100% + 10px);
+      left: 0;
+      min-width: 240px;
+      padding: 8px;
+      border-radius: 14px;
+      background: rgba(17, 24, 39, 0.95);
+      border: 1px solid rgba(255,255,255,0.10);
+      box-shadow: 0 16px 30px rgba(0,0,0,0.35);
+      backdrop-filter: blur(10px);
+      z-index: 1000;
+    }
+
+    .dropdown.is-open .dropdown__menu{
+      display: block;
+    }
+
+    .dropdown__menu::before{
+      content:"";
+      position:absolute;
+      left:0;
+      right:0;
+      top:-10px;
+      height:10px;
+    }
+
+    .dropdown__item{
+      display: block;
+      padding: 10px 12px;
+      border-radius: 12px;
+      text-decoration: none;
+      color: rgba(255,255,255,0.90);
+      border: 1px solid transparent;
+      transition: background .12s ease, border-color .12s ease;
+      font-weight: 650;
+      white-space: nowrap;
+    }
+
+    .dropdown__item:hover{
+      background: rgba(255,255,255,0.06);
+      border-color: rgba(255,255,255,0.10);
+    }
+
+    /* Page: Home */
+    .hero{
+      position: relative;
+      padding: 28px;
+      overflow: hidden;
+    }
+
+    .hero__content{
+      position: relative;
+      z-index: 2;
+      max-width: 720px;
+    }
+
+    .hero__title{
+      margin: 10px 0 10px;
+      font-size: clamp(28px, 3.2vw, 42px);
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      color: white;
+    }
+
+    .hero__subtitle{
+      margin: 0;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.7;
+      max-width: 62ch;
+    }
+
+    .hero__actions{
+      margin-top: 18px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .blob{
+      position: absolute;
+      border-radius: 999px;
+      opacity: 0.85;
+      pointer-events: none;
+    }
+
+    .blob--1{
+      right: -80px;
+      top: -90px;
+      width: 260px;
+      height: 260px;
+      background: rgba(255,255,255,0.10);
+      filter: blur(1px);
+    }
+
+    .blob--2{
+      right: 30px;
+      bottom: -110px;
+      width: 300px;
+      height: 300px;
+      background: rgba(56, 191, 248, 0.22);
+    }
+
+    .grid{
+      margin-top: 18px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+    }
+
+    .feature{
+      padding: 20px;
+      text-align: left;
+      transition: transform .15s ease, border-color .15s ease, background .15s ease;
+    }
+
+    .feature:hover{
+      transform: translateY(-2px);
+      border-color: rgba(255,255,255,0.16);
+      background: rgba(17, 24, 39, 0.78);
+    }
+
+    .feature__title{
+      margin: 0 0 8px;
+      font-size: 18px;
+      color: white;
+    }
+
+    .feature__text{
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.6;
+      min-height: 44px;
+    }
+
+    /* Page: About */
+    .content-card{
+      padding: 22px;
+    }
+
+    .content-card h1{
+      margin: 0 0 10px;
+      color: white;
+      letter-spacing: -0.02em;
+    }
+
+    .content-card p, .content-card li{
+      color: var(--muted);
+      line-height: 1.75;
+      font-size: 15px;
+    }
+
+    .divider{
+      border: 0;
+      border-top: 1px solid rgba(255,255,255,0.12);
+      margin: 18px 0;
+    }
+
+    .feature__img{
+      width: 250px;
+      height: 70px;
+      object-fit: contain;
+      margin-bottom: 20px;
+      display: block;
+      filter: drop-shadow(0 0 8px rgba(0,255,94,0.25));
+    }
+
+    /* ✅ AUTH (Login / Register) */
+    .auth{
+      min-height: calc(100vh - 170px);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding: 28px 0;
+    }
+
+    .auth__card{
+      width: min(520px, 96vw);
+      padding: 22px;
+    }
+
+    .auth__title{
+      margin: 0 0 6px;
+      font-size: 22px;
+      letter-spacing: -0.02em;
+      color: white;
+      display:flex;
+      align-items:center;
+      gap: 8px;
+    }
+
+    .auth__subtitle{
+      margin: 0 0 16px;
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    .auth__form{
+      display: grid;
+      gap: 14px;
+    }
+
+    .auth__field{
+      display:flex;
+      flex-direction:column;
+      gap: 6px;
+    }
+
+    .auth__label{
+      font-weight: 750;
+      font-size: 13px;
+      color: rgba(255,255,255,0.90);
+    }
+
+    .auth__input{
+      width: 100%;
+      padding: 11px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(0,0,0,0.25);
+      color: #fff;
+      outline: none;
+    }
+
+    .auth__input:focus{
+      border-color: var(--focus-border);
+      box-shadow: 0 0 0 3px var(--focus);
+    }
+
+    .auth__alert{
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: var(--danger);
+      border: 1px solid var(--danger-border);
+      margin: 12px 0 12px;
+      font-size: 14px;
+    }
+
+    .auth__help{
+      font-size: 12px;
+      color: rgba(229,231,235,0.70);
+      line-height: 1.5;
+      margin-top: 2px;
+    }
+
+    .auth__error{
+      font-size: 12.5px;
+      color: #ffb1b1;
+      margin-top: 2px;
+    }
+
+    .auth__footer{
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(255,255,255,0.12);
+      text-align:center;
+      color: rgba(229,231,235,0.80);
+      font-size: 14px;
+    }
+
+    .auth__link{
+      color: #7CFFB2;
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    .auth__link:hover{
+      text-decoration: underline;
+    }
+
+    .nav-user{
+      color: rgba(255,255,255,0.85);
+      font-weight: 750;
+      padding: 8px 10px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(255,255,255,0.04);
+    }
+  </style>
+</head>
+
+<body>
+<header>
+  <div class="container">
+    <div class="header__inner">
+      <div class="brand">
+        <span class="brand__dot"></span>
+        <span>Platans Validación</span>
+      </div>
+
+      <nav>
+        {# ✅ INICIO (activo) #}
+        <a class="navlink {% if request.resolver_match.url_name == 'home' %}active{% endif %}"
+           href="{% url 'home' %}">
+          Inicio
+        </a>
+
+        {# ✅ PRUEBA (nuevo apartado, activo) #}
+        <a class="navlink {% if request.resolver_match.url_name == 'prueba' %}active{% endif %}"
+           href="{% url 'prueba' %}">
+          Prueba
+        </a>
+
+        <div class="dropdown" id="aboutDropdown">
+          <button class="navlink {% if request.resolver_match.url_name == 'about' %}active{% endif %}"
+                  type="button"
+                  id="aboutBtn"
+                  aria-haspopup="true"
+                  aria-expanded="false">
+            Acerca de ⬇
+          </button>
+
+          <div class="dropdown__menu" role="menu" aria-labelledby="aboutBtn">
+            <a class="dropdown__item" href="{% url 'about' %}" role="menuitem">
+              📖 Información general
+            </a>
+
+            <a class="dropdown__item"
+               href="https://cenidet.tecnm.mx/"
+               target="_blank"
+               rel="noopener noreferrer"
+               role="menuitem">
+              🏫 TecNm (CENIDET)
+            </a>
+          </div>
+        </div>
+
+        {% if user.is_authenticated %}
+          <span class="nav-user">👤 {{ user.username }}</span>
+          <form action="{% url 'logout' %}" method="post" style="display:inline;">
+            {% csrf_token %}
+            <button class="btn btn--ghost" type="submit">Cerrar sesión</button>
+          </form>
+
+          {% if user.is_staff %}
+<a href="/admin/" class="btn btn--primary">Admin</a>
+{% endif %}
+        {% else %}
+          <a class="btn btn--primary" href="{% url 'login' %}">Iniciar sesión</a>
+          <a class="btn btn--ghost" href="{% url 'register' %}">Registrarse</a>
+        {% endif %}
+      </nav>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="container">
+    {% block content %}{% endblock %}
+  </div>
+</main>
+
+<footer>
+  TECNOLÓGICO NACIONAL DE MÉXICO (CENIDET)
+</footer>
+
+<script>
+  (function () {
+    const dropdown = document.getElementById("aboutDropdown");
+    const btn = document.getElementById("aboutBtn");
+    if (!dropdown || !btn) return;
+
+    function setOpen(isOpen){
+      dropdown.classList.toggle("is-open", isOpen);
+      btn.setAttribute("aria-expanded", isOpen ? "true" : "false");
+    }
+
+    btn.addEventListener("click", function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      setOpen(!dropdown.classList.contains("is-open"));
+    });
+
+    dropdown.addEventListener("click", function (e) {
+      e.stopPropagation();
+    });
+
+    document.addEventListener("click", function () {
+      setOpen(false);
+    });
+
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") setOpen(false);
+    });
+  })();
+</script>
+</body>
+</html>
+

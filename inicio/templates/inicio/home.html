@@ -1,0 +1,94 @@
+{% extends "inicio/base.html" %}
+{% load static %}
+
+{% block title %}Inicio | Validación de Plantas{% endblock %}
+
+{% block content %}
+
+<section class="hero card">
+  <div class="hero__content">
+    <div class="pill">🌿 Sistema de control y validación</div>
+
+    <h1 class="hero__title">
+      Bienvenido 👋 a <span class="accent">Plantas Validación</span>
+    </h1>
+
+    <p class="hero__subtitle">
+      Plataforma de validación de imágenes de plantas para investigación y pruebas,
+      desarrollada por el TecNm/Cenidet.
+    </p>
+
+    <div class="hero__actions">
+      {% if user.is_authenticated %}
+        <a class="btn btn--primary" href="{% url 'home2' %}">Ir a mi panel</a>
+
+        <form action="{% url 'logout' %}" method="post" style="display:inline;">
+          {% csrf_token %}
+          <button class="btn btn--ghost" type="submit">Cerrar sesión</button>
+        </form>
+      {% else %}
+        <a class="btn btn--primary" href="{% url 'login' %}">Iniciar sesión</a>
+        <a class="btn btn--ghost" href="{% url 'register' %}">Registrarse</a>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="blob blob--1"></div>
+  <div class="blob blob--2"></div>
+</section>
+
+<section class="grid">
+
+ <article class="card feature">
+  <img src="{% static 'inicio/imagen1.jpg' %}" alt="Participación ciudadana" class="feature__img">
+  <h3 class="feature__title">🌱 Participa en la investigación</h3>
+  <p class="feature__text">
+    Forma parte de una iniciativa científica colaborativa. Ayuda a construir un registro
+    confiable de imágenes de plantas y contribuye al desarrollo de herramientas de
+    inteligencia artificial para el estudio de la biodiversidad.
+  </p>
+
+  {% if user.is_authenticated %}
+    <a class="btn btn--primary btn--full" href="{% url 'home2' %}">Comenzar participación</a>
+  {% else %}
+    <a class="btn btn--primary btn--full" href="{% url 'login' %}">Unirme al proyecto</a>
+  {% endif %}
+</article>
+
+
+<article class="card feature">
+  <img src="{% static 'inicio/imagen2.jpg' %}" alt="Validación de inteligencia artificial" class="feature__img">
+  <h3 class="feature__title">🔬 Valida resultados de IA</h3>
+  <p class="feature__text">
+    Revisa y confirma las identificaciones generadas por inteligencia artificial.
+    Tu validación ayuda a mejorar la precisión del sistema y fortalece la calidad
+    de los datos utilizados en investigación científica.
+  </p>
+
+  {% if user.is_authenticated %}
+    <a class="btn btn--primary btn--full" href="{% url 'home2' %}">Validar registros</a>
+  {% else %}
+    <a class="btn btn--primary btn--full" href="{% url 'login' %}">Participar en validación</a>
+  {% endif %}
+</article>
+
+
+<article class="card feature">
+  <img src="{% static 'inicio/imagen3.jpg' %}" alt="Resultados y análisis científico" class="feature__img">
+  <h3 class="feature__title">📊 Observa el impacto</h3>
+  <p class="feature__text">
+    Explora los avances del proyecto, analiza los resultados obtenidos y descubre
+    cómo la colaboración entre la sociedad y la inteligencia artificial impulsa
+    nuevas oportunidades para el conocimiento de las plantas.
+  </p>
+
+  {% if user.is_authenticated %}
+    <a class="btn btn--primary btn--full" href="{% url 'home2' %}">Ver panel de análisis</a>
+  {% else %}
+    <a class="btn btn--primary btn--full" href="{% url 'login' %}">Acceder al sistema</a>
+  {% endif %}
+</article>
+
+</section>
+
+{% endblock %}

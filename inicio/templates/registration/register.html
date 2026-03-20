@@ -1,0 +1,90 @@
+{% extends "inicio/base.html" %}
+
+{% block title %}Registro{% endblock %}
+
+{% block content %}
+<section class="auth">
+  <div class="auth__card card">
+    <h2 class="auth__title">📝 Crear cuenta</h2>
+    <p class="auth__subtitle">Registra un usuario para acceder al sistema.</p>
+
+    {% if form.errors %}
+      <div class="auth__alert">
+        Revisa los campos. Hay errores en el formulario.
+      </div>
+    {% endif %}
+
+    <form method="post" class="auth__form">
+      {% csrf_token %}
+
+      <div class="auth__field">
+        <label class="auth__label" for="{{ form.username.id_for_label }}">Usuario</label>
+        {{ form.username }}
+        {% if form.username.errors %}
+          <div class="auth__error">{{ form.username.errors|striptags }}</div>
+        {% endif %}
+        {% if form.username.help_text %}
+          <div class="auth__help">{{ form.username.help_text|safe }}</div>
+        {% endif %}
+      </div>
+
+      <div class="auth__field">
+        <label class="auth__label" for="{{ form.email.id_for_label }}">Correo</label>
+        {{ form.email }}
+        {% if form.email.errors %}
+          <div class="auth__error">{{ form.email.errors|striptags }}</div>
+        {% endif %}
+      </div>
+
+      <div class="auth__field">
+        <label class="auth__label" for="{{ form.edad.id_for_label }}">Edad</label>
+        {{ form.edad }}
+        {% if form.edad.errors %}
+          <div class="auth__error">{{ form.edad.errors|striptags }}</div>
+        {% endif %}
+      </div>
+
+      <div class="auth__field">
+        <label class="auth__label" for="{{ form.sexo.id_for_label }}">Sexo</label>
+        {{ form.sexo }}
+        {% if form.sexo.errors %}
+          <div class="auth__error">{{ form.sexo.errors|striptags }}</div>
+        {% endif %}
+      </div>
+
+      <div class="auth__field">
+        <label class="auth__label" for="{{ form.rol.id_for_label }}">Rol</label>
+        {{ form.rol }}
+        {% if form.rol.errors %}
+          <div class="auth__error">{{ form.rol.errors|striptags }}</div>
+        {% endif %}
+      </div>
+
+      <div class="auth__field">
+        <label class="auth__label" for="{{ form.password1.id_for_label }}">Contraseña</label>
+        {{ form.password1 }}
+        {% if form.password1.errors %}
+          <div class="auth__error">{{ form.password1.errors|striptags }}</div>
+        {% endif %}
+        {% if form.password1.help_text %}
+          <div class="auth__help">{{ form.password1.help_text|safe }}</div>
+        {% endif %}
+      </div>
+
+      <div class="auth__field">
+        <label class="auth__label" for="{{ form.password2.id_for_label }}">Confirmar contraseña</label>
+        {{ form.password2 }}
+        {% if form.password2.errors %}
+          <div class="auth__error">{{ form.password2.errors|striptags }}</div>
+        {% endif %}
+      </div>
+
+      <button class="btn btn--primary btn--full" type="submit">Registrarse</button>
+    </form>
+
+    <div class="auth__footer">
+      ¿Ya tienes cuenta? <a class="auth__link" href="{% url 'login' %}">Inicia sesión</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

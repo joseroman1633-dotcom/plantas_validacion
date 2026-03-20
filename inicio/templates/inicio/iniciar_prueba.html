@@ -1,0 +1,486 @@
+{% extends "inicio/base.html" %}
+
+{% block title %}Prueba pública{% endblock %}
+
+{% block content %}
+<section class="test-center">
+  <div class="test-center__card">
+
+    {% if sin_imagenes %}
+      <span class="test-center__badge">Prueba pública</span>
+      <h1 class="test-center__title">No hay imágenes disponibles</h1>
+      <p class="test-center__subtitle">
+        Actualmente no existen imágenes activas para realizar la prueba.
+      </p>
+      <div class="test-center__actions">
+        <a class="btn btn--ghost" href="{% url 'prueba' %}">Volver</a>
+      </div>
+
+    {% elif mostrar_feedback %}
+      <span class="test-center__badge">Resultado</span>
+      <h1 class="test-center__title">
+        {% if es_correcta %}
+          ✅ Tu respuesta fue correcta
+        {% else %}
+          ❌ Tu respuesta fue incorrecta
+        {% endif %}
+      </h1>
+
+      <p class="test-center__subtitle">
+        Imagen {{ numero_actual }} de {{ total }}
+      </p>
+
+      <div class="test-center__image-wrap">
+        <img
+          src="{{ imagen.imagen.url }}"
+          alt="{{ imagen.nombre }}"
+          class="test-center__image"
+        >
+      </div>
+
+      <div class="test-center__result-box">
+        <p><strong>Tu respuesta:</strong> {{ respuesta_usuario }}</p>
+        <p><strong>Respuesta correcta:</strong> {{ respuesta_correcta }}</p>
+        <p>
+          <strong>Resultado:</strong>
+          {% if es_correcta %}
+            <span class="status status--ok">Correcta</span>
+          {% else %}
+            <span class="status status--error">Incorrecta</span>
+          {% endif %}
+        </p>
+      </div>
+
+      <div class="test-center__actions">
+        <a class="btn btn--primary" href="{% url 'iniciar_prueba_publica' %}">
+          Continuar
+        </a>
+      </div>
+
+    {% elif seleccionar_destinatario %}
+      <span class="test-center__badge">Finalizar prueba</span>
+      <h1 class="test-center__title">Completa tus datos</h1>
+      <p class="test-center__subtitle">
+        Total: {{ total }} | Correctas: {{ correctas }} | Incorrectas: {{ incorrectas }}
+      </p>
+
+      <form method="post" class="test-center__form">
+        {% csrf_token %}
+        <input type="hidden" name="accion" value="finalizar">
+
+        <div class="test-center__field">
+          <label class="test-center__label">Nombre</label>
+          {{ form_participante.nombre }}
+          {% if form_participante.nombre.errors %}
+            <div class="test-center__error">{{ form_participante.nombre.errors|striptags }}</div>
+          {% endif %}
+        </div>
+
+        <div class="test-center__field">
+          <label class="test-center__label">Correo electrónico</label>
+          {{ form_participante.correo }}
+          {% if form_participante.correo.errors %}
+            <div class="test-center__error">{{ form_participante.correo.errors|striptags }}</div>
+          {% endif %}
+        </div>
+
+        <div class="test-center__field">
+          <label class="test-center__label">Edad</label>
+          {{ form_participante.edad }}
+          {% if form_participante.edad.errors %}
+            <div class="test-center__error">{{ form_participante.edad.errors|striptags }}</div>
+          {% endif %}
+        </div>
+
+        <div class="test-center__field">
+          <label class="test-center__label">Sexo</label>
+          {{ form_participante.sexo }}
+          {% if form_participante.sexo.errors %}
+            <div class="test-center__error">{{ form_participante.sexo.errors|striptags }}</div>
+          {% endif %}
+        </div>
+
+        <div class="test-center__field">
+          <label class="test-center__label">Nivel de estudio</label>
+          {{ form_participante.nivel_estudio }}
+          {% if form_participante.nivel_estudio.errors %}
+            <div class="test-center__error">{{ form_participante.nivel_estudio.errors|striptags }}</div>
+          {% endif %}
+        </div>
+
+        <div class="test-center__field">
+          <label class="test-center__label">Enviar a</label>
+          <select name="destinatario" class="test-center__input" required>
+            <option value="">Seleccione</option>
+            <option value="DR_JORGE">Dr. Jorge</option>
+            <option value="LUCIANO">Luciano</option>
+          </select>
+        </div>
+
+        <div class="test-center__actions">
+          <button type="submit" class="btn btn--primary btn--full">
+            Enviar resultados
+          </button>
+        </div>
+      </form>
+
+    {% elif prueba_terminada %}
+      <span class="test-center__badge">Prueba finalizada</span>
+      <h1 class="test-center__title">Prueba enviada correctamente</h1>
+      <p class="test-center__subtitle">
+        Gracias {% if participante %}{{ participante.nombre }}{% endif %}. Tus resultados fueron guardados.
+      </p>
+
+      <div class="test-center__grid">
+        <div class="test-center__item">
+          <h3>Resultados</h3>
+          <p>
+            <strong>Total:</strong> {{ total }}<br>
+            <strong>Correctas:</strong> {{ correctas }}<br>
+            <strong>Incorrectas:</strong> {{ incorrectas }}
+          </p>
+        </div>
+
+        <div class="test-center__item">
+          <h3>Destinatario</h3>
+          <p>
+            {% if destinatario == "DR_JORGE" %}
+              Dr. Jorge
+            {% else %}
+              Luciano
+            {% endif %}
+          </p>
+        </div>
+      </div>
+
+      <div class="test-center__actions">
+        <a class="btn btn--primary" href="{% url 'iniciar_prueba_publica' %}">
+          Iniciar otra prueba
+        </a>
+        
+        <a class="btn btn--ghost" href="{% url 'prueba' %}">
+          Volver al módulo de pruebas
+        </a>
+      </div>
+
+    {% elif imagen %}
+      <span class="test-center__badge">Prueba pública</span>
+      <h1 class="test-center__title">Clasificación de imágenes</h1>
+      <p class="test-center__subtitle">
+        Observa la imagen y selecciona la opción que consideres correcta.
+      </p>
+
+      <p class="test-center__progress">
+        Imagen {{ numero_actual }} de {{ total }}
+      </p>
+
+      <div class="test-center__image-wrap">
+        <img
+          src="{{ imagen.imagen.url }}"
+          alt="{{ imagen.nombre }}"
+          class="test-center__image"
+        >
+      </div>
+
+      <form method="post" class="test-center__form" id="respuestaFormPublica">
+        {% csrf_token %}
+        <input type="hidden" name="accion" value="responder">
+        <input type="hidden" name="imagen_id" value="{{ imagen.id }}">
+
+        <div class="test-center__field test-center__field--center">
+          <label class="test-center__label">Selecciona una respuesta</label>
+
+          <div class="test-center__choice-group">
+            <button type="submit" name="respuesta" value="IA" class="btn btn--choice js-choice-btn">
+              IA
+            </button>
+
+            <button type="submit" name="respuesta" value="NO_IA" class="btn btn--choice js-choice-btn">
+              SINTÉTICA
+            </button>
+          </div>
+        </div>
+      </form>
+
+    {% else %}
+      <span class="test-center__badge">Prueba pública</span>
+      <h1 class="test-center__title">No se pudo cargar la prueba</h1>
+      <p class="test-center__subtitle">Intenta nuevamente.</p>
+      <div class="test-center__actions">
+        <a class="btn btn--primary" href="{% url 'prueba' %}">Volver</a>
+      </div>
+    {% endif %}
+
+  </div>
+</section>
+
+<style>
+  .test-center{
+    min-height: calc(100vh - 140px);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:60px 16px;
+  }
+
+ .test-center__card{
+  width:min(760px, 100%);
+  background: rgba(10, 20, 28, .55);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 18px;
+  padding: 22px;
+  backdrop-filter: blur(8px);
+}
+
+  .test-center__badge{
+    display:inline-block;
+    font-size:12px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    padding:8px 12px;
+    border-radius:999px;
+    border:1px solid rgba(0,255,150,.25);
+    color:rgba(180,255,225,.92);
+    margin-bottom:12px;
+  }
+
+  .test-center__title{
+    margin:0 0 10px;
+    font-size:clamp(26px, 3.2vw, 38px);
+    color:#fff;
+  }
+
+  .test-center__subtitle{
+    margin:0 0 18px;
+    color:rgba(255,255,255,.75);
+    line-height:1.6;
+    font-size:15px;
+  }
+
+  .test-center__progress{
+    color:#9ff5c8;
+    font-weight:700;
+    margin-bottom:18px;
+    text-align:center;
+  }
+
+  .test-center__image-wrap{
+    width:100%;
+    display:flex;
+    justify-content:center;
+    margin:22px 0;
+  }
+
+  .test-center__image{
+    max-width:100%;
+    max-height:420px;
+    border-radius:16px;
+    border:1px solid rgba(255,255,255,.1);
+    object-fit:contain;
+    background:rgba(255,255,255,.04);
+    padding:8px;
+  }
+
+  .test-center__form{
+    width:100%;
+  }
+
+  .test-center__field{
+    margin-bottom:18px;
+  }
+
+  .test-center__field--center{
+    text-align:center;
+  }
+
+  .test-center__label{
+    display:block;
+    margin-bottom:10px;
+    color:#fff;
+    font-weight:700;
+  }
+
+  .test-center__actions{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:12px;
+    flex-wrap:wrap;
+    margin-top:20px;
+  }
+
+  .test-center__choice-group{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:14px;
+    flex-wrap:wrap;
+  }
+
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    padding:12px 20px;
+    border-radius:12px;
+    text-decoration:none;
+    font-weight:700;
+    cursor:pointer;
+    border:none;
+    transition:all .25s ease;
+  }
+
+  .btn--primary{
+    background: rgba(0,255,150,.18);
+    border: 1px solid rgba(0,255,150,.35);
+    color:#fff;
+  }
+
+  .btn--primary:hover{
+    background: rgba(0,255,150,.24);
+    transform: translateY(-1px);
+  }
+
+  .btn--ghost{
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(255,255,255,.12);
+    color:#fff;
+  }
+
+  .btn--ghost:hover{
+    background: rgba(255,255,255,.1);
+    transform: translateY(-1px);
+  }
+
+  .btn--choice{
+    min-width:140px;
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(255,255,255,.16);
+    color:#fff;
+  }
+
+  .btn--choice:hover{
+    border-color: rgba(0,255,150,.45);
+    background: rgba(255,255,255,.1);
+  }
+
+  .btn--choice.is-selected{
+    background: rgba(0,255,150,.22);
+    border: 1px solid rgba(0,255,150,.75);
+    color:#fff;
+    box-shadow: 0 0 0 3px rgba(0,255,150,.12);
+  }
+
+  .btn--full{
+    width:100%;
+  }
+
+  .test-center__grid{
+    display:grid;
+    grid-template-columns: repeat(2,1fr);
+    gap:16px;
+    margin:20px 0;
+  }
+
+  .test-center__item,
+  .test-center__result-box{
+    background: rgba(0,0,0,.25);
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:12px;
+    padding:16px;
+    color:#fff;
+  }
+
+  .test-center__error{
+    margin-top:8px;
+    color:#ff8fa3;
+    font-size:14px;
+  }
+
+  .status--ok{
+    color:#00d26a;
+    font-weight:700;
+  }
+
+  .status--error{
+    color:#ff5c7a;
+    font-weight:700;
+  }
+
+  .test-center__form{
+  width: 100%;
+  max-width: 620px;
+  margin: 0 auto;
+}
+
+.test-center__field{
+  margin-bottom: 14px;
+}
+
+.test-center__label{
+  display:block;
+  margin-bottom:8px;
+  color:#fff;
+  font-weight:700;
+  font-size:15px;
+}
+
+.test-center__input,
+.test-center input,
+.test-center select,
+.test-center textarea{
+  width:100%;
+  max-width: 620px;
+  background:#fff !important;
+  color:#000 !important;
+  border:1px solid #d7dce2 !important;
+  border-radius:10px;
+  padding:10px 12px;
+  min-height:42px;
+  font-size:14px;
+  box-sizing:border-box;
+  appearance:auto;
+}
+
+  .test-center select option{
+    background:#fff;
+    color:#000;
+  }
+
+  .test-center__input:focus,
+  .test-center input:focus,
+  .test-center select:focus,
+  .test-center textarea:focus{
+    outline:none;
+    border:1px solid #00c86f !important;
+    box-shadow:0 0 0 3px rgba(0,200,111,.18);
+  }
+
+  @media (max-width: 768px){
+    .test-center__card{
+      padding:20px;
+    }
+
+    .test-center__grid{
+      grid-template-columns:1fr;
+    }
+
+    .btn--choice{
+      width:100%;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const botones = document.querySelectorAll(".js-choice-btn");
+
+    botones.forEach((boton) => {
+      boton.addEventListener("click", function () {
+        botones.forEach((b) => b.classList.remove("is-selected"));
+        this.classList.add("is-selected");
+      });
+    });
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends "inicio/base.html" %}
+
+{% block title %}Gráficas públicas{% endblock %}
+
+{% block content %}
+<section class="auth">
+  <div class="auth__card card" style="max-width: 900px;">
+    <h2 class="auth__title">Resultados públicos</h2>
+    <p class="auth__subtitle">
+      Resultados generales de las pruebas realizadas.
+    </p>
+
+    <div class="card" style="padding:20px; margin-top:20px;">
+      <h3 style="margin-top:0;">Correctas vs Incorrectas</h3>
+      <canvas id="chartCorrectas"></canvas>
+    </div>
+
+    <div style="margin-top:24px; display:flex; gap:12px; flex-wrap:wrap;">
+      <a class="btn btn--primary" href="{% url 'iniciar_prueba_publica' %}">
+        Realizar prueba pública
+      </a>
+      <a class="btn btn--ghost" href="{% url 'prueba' %}">
+        Volver
+      </a>
+    </div>
+  </div>
+</section>
+
+{{ correctas|json_script:"correctas-data" }}
+{{ incorrectas|json_script:"incorrectas-data" }}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const correctas = JSON.parse(document.getElementById("correctas-data").textContent);
+  const incorrectas = JSON.parse(document.getElementById("incorrectas-data").textContent);
+
+  new Chart(document.getElementById("chartCorrectas"), {
+    type: "doughnut",
+    data: {
+      labels: ["Correctas", "Incorrectas"],
+      datasets: [{
+        data: [correctas, incorrectas]
+      }]
+    }
+  });
+</script>
+{% endblock %}
