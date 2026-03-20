@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from inicio.models import ParticipantePublico
+from cloudinary.models import CloudinaryField
 
 
 class ImagenValidacion(models.Model):
@@ -10,7 +11,7 @@ class ImagenValidacion(models.Model):
     ]
 
     nombre = models.CharField(max_length=255)
-    imagen = models.ImageField(upload_to="imagenes_validacion/")
+    imagen = CloudinaryField("imagen")
     imagen_base64 = models.TextField(blank=True, null=True)
     tipo_origen = models.CharField(max_length=10, choices=TIPO_CHOICES)
     seleccionada = models.BooleanField(default=False)
@@ -36,7 +37,7 @@ class SesionPrueba(models.Model):
         max_length=20,
         choices=DESTINATARIO_CHOICES,
         blank=True,
-        null=True
+        null=True,
     )
 
     def __str__(self):
@@ -54,7 +55,7 @@ class PruebaImagenRespuesta(models.Model):
         on_delete=models.CASCADE,
         related_name="respuestas",
         null=True,
-        blank=True
+        blank=True,
     )
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)
     imagen = models.ForeignKey(ImagenValidacion, on_delete=models.CASCADE)
@@ -77,7 +78,7 @@ class SesionPruebaPublica(models.Model):
         on_delete=models.CASCADE,
         related_name="sesiones_publicas",
         null=True,
-        blank=True
+        blank=True,
     )
     fecha_inicio = models.DateTimeField(auto_now_add=True)
     fecha_fin = models.DateTimeField(blank=True, null=True)
@@ -86,7 +87,7 @@ class SesionPruebaPublica(models.Model):
         max_length=20,
         choices=DESTINATARIO_CHOICES,
         blank=True,
-        null=True
+        null=True,
     )
 
     def __str__(self):
@@ -106,14 +107,14 @@ class PruebaImagenRespuestaPublica(models.Model):
         on_delete=models.CASCADE,
         related_name="respuestas",
         null=True,
-        blank=True
+        blank=True,
     )
     participante = models.ForeignKey(
         ParticipantePublico,
         on_delete=models.CASCADE,
         related_name="respuestas_publicas",
         null=True,
-        blank=True
+        blank=True,
     )
     imagen = models.ForeignKey(ImagenValidacion, on_delete=models.CASCADE)
     respuesta = models.CharField(max_length=20, choices=RESPUESTA_CHOICES)
