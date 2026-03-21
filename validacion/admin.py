@@ -1,152 +1,79 @@
-import base64
-
-from django.contrib import admin, messages
-from django.shortcuts import render, redirect
-from django.urls import path
-
-from .forms import MultipleImageUploadForm
-from .models import ImagenValidacion, SesionPrueba, PruebaImagenRespuesta
+from django.contrib import admin
+from django.utils.html import format_html
+from .models import (
+    ImagenValidacion,
+    SesionPrueba,
+    PruebaImagenRespuesta,
+    SesionPruebaPublica,
+    PruebaImagenRespuestaPublica,
+)
 
 
 @admin.register(ImagenValidacion)
 class ImagenValidacionAdmin(admin.ModelAdmin):
     list_display = (
-        'id',
-        'nombre',
-        'tipo_origen',
-        'seleccionada',
-        'subida_por',
-        'fecha_subida',
-        'activa',
+        "id",
+        "nombre",
+        "preview_imagen",
+        "imagen",
+        "tipo_origen",
+        "seleccionada",
+        "activa",
+    )
+    search_fields = ("nombre", "imagen")
+    list_filter = ("tipo_origen", "activa", "seleccionada")
+    readonly_fields = ("preview_imagen", "fecha_subida")
+    fields = (
+        "nombre",
+        "imagen",
+        "preview_imagen",
+        "tipo_origen",
+        "seleccionada",
+        "activa",
+        "subida_por",
+        "imagen_base64",
+        "fecha_subida",
     )
 
-    list_filter = (
-        'tipo_origen',
-        'seleccionada',
-        'activa',
-        'fecha_subida',
-    )
+    def save_model(self, request, obj, form, change):
+        if not obj.subida_por:
+            obj.subida_por = request.user
+        super().save_model(request, obj, form, change)
 
-    search_fields = (
-        'nombre',
-        'subida_por__username',
-    )
-
-    exclude = ('imagen_base64',)
-
-    change_list_template = "admin/validacion/imagenvalidacion/change_list.html"
-
-    def get_urls(self):
-        urls = super().get_urls()
-        custom_urls = [
-            path(
-                'carga-multiple/',
-                self.admin_site.admin_view(self.carga_multiple_view),
-                name='validacion_imagenvalidacion_carga_multiple'
-            ),
-        ]
-        return custom_urls + urls
-
-    def carga_multiple_view(self, request):
-        if not self.has_add_permission(request):
-            messages.error(request, "No tienes permisos para agregar imágenes.")
-            return redirect("..")
-
-        if request.method == "POST":
-            form = MultipleImageUploadForm(request.POST, request.FILES)
-
-            if form.is_valid():
-                files = form.cleaned_data["imagenes"]
-                tipo_origen = form.cleaned_data["tipo_origen"]
-                seleccionada = form.cleaned_data["seleccionada"]
-                activa = form.cleaned_data["activa"]
-
-                total = 0
-
-                for archivo in files:
-                    nombre_base = archivo.name.rsplit(".", 1)[0]
-
-                    imagen_base64 = None
-                    if seleccionada:
-                        contenido = archivo.read()
-                        imagen_base64 = base64.b64encode(contenido).decode("utf-8")
-                        archivo.seek(0)
-
-                    ImagenValidacion.objects.create(
-                        nombre=nombre_base,
-                        imagen=archivo,
-                        imagen_base64=imagen_base64,
-                        tipo_origen=tipo_origen,
-                        seleccionada=seleccionada,
-                        activa=activa,
-                        subida_por=request.user,
-                    )
-                    total += 1
-
-                self.message_user(
-                    request,
-                    f"Se cargaron correctamente {total} imágenes.",
-                    level=messages.SUCCESS
-                )
-                return redirect("../")
-        else:
-            form = MultipleImageUploadForm()
-
-        context = {
-            **self.admin_site.each_context(request),
-            "opts": self.model._meta,
-            "form": form,
-            "title": "Carga múltiple de imágenes",
-        }
-
-        return render(
-            request,
-            "admin/validacion/imagenvalidacion/carga_multiple.html",
-            context,
-        )
+    @admin.display(description="Vista previa")
+    def preview_imagen(self, obj):
+        if obj.imagen:
+            return format_html(
+                '<img src="/static/{}" style="max-height:120px;border-radius:8px;border:1px solid #ccc;padding:4px;" />',
+                obj.imagen
+            )
+        if obj.imagen_base64:
+            return format_html(
+                '<img src="data:image/jpeg;base64,{}" style="max-height:120px;border-radius:8px;border:1px solid #ccc;padding:4px;" />',
+                obj.imagen_base64
+            )
+        return "Sin imagen"
 
 
 @admin.register(SesionPrueba)
 class SesionPruebaAdmin(admin.ModelAdmin):
-    list_display = (
-        'id',
-        'usuario',
-        'destinatario',
-        'finalizada',
-        'fecha_inicio',
-        'fecha_fin',
-    )
-
-    list_filter = (
-        'destinatario',
-        'finalizada',
-        'fecha_inicio',
-    )
-
-    search_fields = (
-        'usuario__username',
-    )
+    list_display = ("id", "usuario", "fecha_inicio", "fecha_fin", "finalizada", "destinatario")
+    list_filter = ("finalizada", "destinatario")
 
 
 @admin.register(PruebaImagenRespuesta)
 class PruebaImagenRespuestaAdmin(admin.ModelAdmin):
-    list_display = (
-        'id',
-        'sesion',
-        'usuario',
-        'imagen',
-        'respuesta',
-        'es_correcta',
-        'fecha_respuesta',
-    )
+    list_display = ("id", "usuario", "imagen", "respuesta", "es_correcta", "fecha_respuesta")
+    list_filter = ("respuesta", "es_correcta")
 
-    list_filter = (
-        'respuesta',
-        'es_correcta',
-        'fecha_respuesta',
-    )
 
-    search_fields = (
-        'usuario__username',
-        'imagen__nombre',
-    )
+@admin.register(SesionPruebaPublica)
+class SesionPruebaPublicaAdmin(admin.ModelAdmin):
+    list_display = ("id", "participante", "fecha_inicio", "fecha_fin", "finalizada", "destinatario")
+    list_filter = ("finalizada", "destinatario")
+
+
+@admin.register(PruebaImagenRespuestaPublica)
+class PruebaImagenRespuestaPublicaAdmin(admin.ModelAdmin):
+    list_display = ("id", "participante", "imagen", "respuesta", "es_correcta", "fecha_respuesta")
+    list_filter = ("respuesta", "es_correcta")
