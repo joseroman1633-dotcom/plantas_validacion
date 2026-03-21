@@ -14,7 +14,7 @@ class ImagenValidacion(models.Model):
         max_length=255,
         blank=True,
         null=True,
-        help_text="Ruta relativa dentro de static. Ej: imagenes_validacion/aaa.jpg",
+        help_text="Ruta relativa dentro de static. Ej: imagenes_validacion/archivo.jpg",
     )
     imagen_base64 = models.TextField(blank=True, null=True)
     tipo_origen = models.CharField(max_length=10, choices=TIPO_CHOICES)
