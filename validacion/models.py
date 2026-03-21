@@ -1,7 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
 from inicio.models import ParticipantePublico
-from cloudinary.models import CloudinaryField
 
 
 class ImagenValidacion(models.Model):
@@ -11,7 +10,12 @@ class ImagenValidacion(models.Model):
     ]
 
     nombre = models.CharField(max_length=255)
-    imagen = CloudinaryField("imagen")
+    imagen = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+        help_text="Ruta relativa dentro de static. Ej: imagenes_validacion/aaa.jpg",
+    )
     imagen_base64 = models.TextField(blank=True, null=True)
     tipo_origen = models.CharField(max_length=10, choices=TIPO_CHOICES)
     seleccionada = models.BooleanField(default=False)
